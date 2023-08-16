@@ -20,3 +20,5 @@ Highlighted was developed as a showcase of my expertise in developing with .NET 
 
 I welcome feedback, suggestions, and contributions from the community to improve and expand Highlighted. Whether you're interested in design, development, or documentation, your input is highly valued.
 
+## App demonstration
+https://github.com/Buraska/HighlightedApp/assets/73584781/69b92159-685c-4556-a468-c1dda3c72b51
