@@ -1,3 +1,4 @@
+![LogoH](https://github.com/Buraska/HighlightedApp/assets/73584781/ac0c7474-3a31-4587-9d5c-1f0801b1f4f1)
 # Highlighted - Book Reading and Note-taking App
 
 Highlighted is a minimal viable product designed to enhance your reading experience and simplify the process of summarizing and note-taking. This application seamlessly combines a .NET backend with a Vue.js frontend.
