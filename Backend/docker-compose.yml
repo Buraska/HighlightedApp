@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  vue-webapp:
+    container_name: vue-webapp
+    build:
+      context: C:\Users\vadim\WebstormProjects\icd0021-21-22-s\vue-1\
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "7000:70"
+  
+  webapp:
+    container_name: webapp
+    build:
+      context: ../WebApp/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - "ConnectionStrings:NpgsqlConnection=Host=webapp-postgres;Port=5432;Username=postgres;Password=postgres;database=Webapp;IncludeErrorDetail=true"
+    ports:
+      - "8000:80"
+  
+  webapp-postgres:
+    container_name: webapp-postgres
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      - POSTGEST_user=postgres
+      - POSTGRES_PASSWORD=postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5432:5432"
+  
+    volumes:
+        - webapp-postgres-volume:/var/lib/postgresql/data
+
+volumes:
+  webapp-postgres-volume: 
+
