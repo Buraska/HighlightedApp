@@ -1,42 +1,57 @@
 <template>
-  <div class="container">
-
-
-    <div class="row">
-      <div class="col-4  form-floating">
-              <textarea style="resize: none" v-model="input" class="form-control" type="text" placeholder="title"
-                        id="barr"></textarea>
-
-        <label for="barr">Search {{ title }} ...</label>
-      </div>
-
+  <div class="space-y-4">
+    <div>
+      <label for="barr" class="block font-body text-sm font-medium text-ink-800 mb-2">
+        Search {{ title }}...
+      </label>
+      <textarea
+        id="barr"
+        v-model="input"
+        rows="2"
+        class="input-field resize-none"
+        placeholder="Type to search..."
+      ></textarea>
     </div>
 
-    <div class="row">
-
-      <div class="col-3 m-1">
-        <div v-on:click="moveElement(item, suggestedItems, chosenItems)" class="item"
-             v-for="item in filteredList(suggestedItems)">
-          {{ item.name }}
-        </div>
-
-        <div class="item error" v-if="input&&!filteredList(suggestedItems).length">
-          <p>No results found!</p>
-        </div>
-
-        <div class="item missing" v-if="suggestedItems.length === 0">
-          <p>No tags left</p>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <p class="font-body text-xs font-medium text-ink-800/70 uppercase tracking-wide">Available</p>
+        <div class="space-y-2 max-h-48 overflow-y-auto">
+          <button
+            v-for="item in filteredList(suggestedItems)"
+            :key="item.name"
+            type="button"
+            @click="moveElement(item, suggestedItems, chosenItems)"
+            class="w-full text-left px-4 py-2.5 font-body text-sm text-white bg-ink-800/70 hover:bg-ink-800 rounded-xl transition-colors"
+          >
+            {{ item.name }}
+          </button>
+          <div>
+            <p v-if="input && !filteredList(suggestedItems).length" class="px-4 py-2 font-body text-sm text-red-700 bg-red-50 rounded-xl">
+              No results found!
+            </p>
+            <p v-if="suggestedItems.length === 0 && !input" class="px-4 py-2 font-body text-sm text-ink-800/60 bg-parchment-200 rounded-xl">
+              No tags left
+            </p>
+          </div>
         </div>
       </div>
 
-      <div class="col-3 m-1">
-        <div class="item chosen" v-for="item in chosenItems">
-          <p v-on:click="moveElement(item, chosenItems, suggestedItems)">{{ item.name }}</p>
+      <div class="space-y-2">
+        <p class="font-body text-xs font-medium text-ink-800/70 uppercase tracking-wide">Selected</p>
+        <div class="space-y-2 max-h-48 overflow-y-auto">
+          <button
+            v-for="item in chosenItems"
+            :key="item.name"
+            type="button"
+            @click="moveElement(item, chosenItems, suggestedItems)"
+            class="w-full text-left px-4 py-2.5 font-body text-sm text-white bg-accent-amber hover:bg-accent-gold rounded-xl transition-colors"
+          >
+            {{ item.name }}
+          </button>
         </div>
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -71,61 +86,3 @@ function moveElement(item: ISearchBarItem, fArray: ISearchBarItem[], sArray: ISe
   fArray.splice(i, 1);
 }
 </script>
-
-<style scoped>
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-.col-auto {
-  margin: 3px;
-}
-
-body {
-  padding: 20px;
-  min-height: 100vh;
-  background-color: rgb(234, 242, 255);
-}
-
-input {
-  display: block;
-  width: 350px;
-  margin: 20px auto;
-  padding: 10px 45px;
-  background-size: 15px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-  rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-}
-
-.item {
-  margin: 0 auto 10px auto;
-  padding: 10px 20px;
-  color: white;
-  border-radius: 5px;
-  background-color: rgb(152, 120, 120);
-  cursor: pointer;
-}
-
-.error {
-  background-color: tomato;
-}
-
-.missing {
-  background-color: rgb(164, 159, 159);
-  color: #000000;
-
-}
-
-.chosen{
-  background-color: rgb(147, 54, 54);
-  color: #ffffff;
-
-
-}
-</style>

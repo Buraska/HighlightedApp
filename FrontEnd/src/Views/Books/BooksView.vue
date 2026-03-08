@@ -1,81 +1,113 @@
 <template>
-  <div class="container">
-
-
-    <div id="dictPopUp"
-         style="display:none; right:40vw;width: 300px; position: fixed; background-color:rgb(169,156,156)"
-         class="container">
-
-      <div v-on:click="hidePopUp" style="cursor: pointer; width: 7px" class="float-end m-2">&#10006;</div>
-
-      <div style="margin: 10px"
-           class="row">
-        word: {{ dictWord.content }}
-      </div>
-      <div style="margin: 2px;" class="row">
-          <textarea style="; resize:none;" v-model="dictMeaning"
-                    class="form-control" type="text"
-                    placeholder="means..."></textarea>
-      </div>
-      <div style="margin: 2px; margin-bottom: 10px;margin-top: 10px;" class="row">
-        <button v-on:click="saveDictWord" style="width: 70px" class="btn-dark">
-          save
-        </button>
-      </div>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Dictionary Popup -->
+    <div
+      id="dictPopUp"
+      class="fixed z-50 right-[10vw] w-[300px] bg-white rounded-2xl shadow-book-hover border border-accent-warm/40 p-4"
+      :class="{ hidden: !dictPopUpVisible }"
+      style="top: 120px"
+    >
+      <button
+        v-on:click="hidePopUp"
+        class="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-parchment-100 text-ink-800"
+        aria-label="Close"
+      >
+        &#10006;
+      </button>
+      <div class="font-body text-ink-800 mb-2">Word: {{ dictWord.content }}</div>
+      <textarea
+        v-model="dictMeaning"
+        class="input-field resize-none mb-4"
+        rows="3"
+        placeholder="Meaning..."
+      ></textarea>
+      <button v-on:click="saveDictWord" class="btn-primary w-full">
+        Save
+      </button>
     </div>
 
-
-    <div class="row">
-      <div class="col-2">
-        <div style="position: fixed; left: 10px; width: 200px">
-          <div><router-link :to="'/books/preview' + book.id"><button class="btn-dark">to preview</button></router-link></div>
-          <div v-on:click="showPref" style="; cursor: pointer; width: 20px; opacity: 0.7">&#9881</div>
-          <div style="display: none;padding:10px; background-color: rgb(169,156,156)" id="preferences">
-            <div class="form-group">
-              <label for="fontFace">font face</label>
-              <select v-model="book.preference.fontFace" class="form-control" id="fontFace">
-                <option :value="face" v-for="face in fontFaces">{{ face.name }}</option>
-              </select>
-            </div>
-            <div>
-              <label for="fontSize">Font size</label>
-              <input v-model="book.preference.fontSize" type="range" class="custom-range" min="10" max="26"
-                     id="fontSize">
-            </div>
-            <div style="margin-top: 5px">
-              <button v-on:click="scrollToLastPosition" style="" class="btn-dark">to last position</button>
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Left sidebar -->
+      <div class="lg:w-48 shrink-0 order-2 lg:order-1">
+        <div class="lg:sticky lg:top-24 space-y-4">
+          <router-link :to="'/books/preview' + book.id" class="btn-secondary w-full block text-center">
+            To preview
+          </router-link>
+          <div class="relative">
+            <button
+              v-on:click="showPref"
+              class="p-2 rounded-lg hover:bg-parchment-100 text-ink-800 opacity-70 hover:opacity-100 transition-opacity"
+              aria-label="Preferences"
+            >
+              &#9881;
+            </button>
+            <div
+              v-show="prefVisible"
+              id="preferences"
+              class="absolute left-0 top-full mt-2 p-4 bg-white rounded-xl shadow-book border border-accent-warm/40 min-w-[200px]"
+            >
+              <div class="space-y-4">
+                <div>
+                  <label for="fontFace" class="block font-body text-sm font-medium text-ink-800 mb-1">Font</label>
+                  <select v-model="book.preference.fontFace" id="fontFace" class="input-field text-sm">
+                    <option v-for="face in fontFaces" :key="face.name" :value="face">{{ face.name }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="fontSize" class="block font-body text-sm font-medium text-ink-800 mb-1">
+                    Size: {{ book.preference.fontSize }}px
+                  </label>
+                  <input
+                    v-model="book.preference.fontSize"
+                    type="range"
+                    min="10"
+                    max="26"
+                    id="fontSize"
+                    class="w-full accent-accent-amber"
+                  />
+                </div>
+                <button v-on:click="scrollToLastPosition" class="btn-secondary w-full text-sm">
+                  To last position
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div id="text-placeholder" class="col-8 bg-light" style="white-space: pre-line"
-           :style="{fontSize: book.preference.fontSize + 'px', fontFamily: book.preference.fontFace.name }"
-           v-html="text"></div>
 
-      <div class="col-2" style="position:fixed;top:100px;float:right;right:30px;">
-        <div style="width: 100px;height: 35px; margin-bottom: 20px" class="button row">
-          <button v-on:click="addQuote" class="btn-dark">
-            quote
+      <!-- Main content -->
+      <div
+        id="text-placeholder"
+        class="flex-1 min-w-0 bg-parchment-50 rounded-2xl border border-accent-warm/40 p-8 font-body text-ink-800 leading-relaxed whitespace-pre-line"
+        :style="{ fontSize: book.preference.fontSize + 'px', fontFamily: book.preference.fontFace.name }"
+        v-html="text"
+      ></div>
+
+      <!-- Right sidebar -->
+      <div class="lg:w-48 shrink-0 order-1 lg:order-3 space-y-4">
+        <div class="lg:sticky lg:top-24 space-y-4">
+          <button v-on:click="addQuote" class="btn-secondary w-full">
+            Quote
           </button>
-        </div>
-        <div style="width: 100px;height: 35px; margin-bottom: 20px" class="row">
-          <button v-on:click="addDict" class="btn-dark">
-            dictionary
+          <button v-on:click="addDict" class="btn-secondary w-full">
+            Dictionary
           </button>
-        </div>
-        <div class="row">
-          <textarea style="resize:none; margin-bottom: 10px; width: 200px; height: 200px" v-model="note"
-                    class="form-control" type="text"
-                    placeholder="Note..." id="title"></textarea>
-          <button v-on:click="addNote" style="height: 35px; width: 120px" class="btn-dark">
-            write down
-          </button>
+          <div>
+            <textarea
+              v-model="note"
+              class="input-field resize-none mb-2"
+              rows="6"
+              placeholder="Note..."
+            ></textarea>
+            <button v-on:click="addNote" class="btn-primary w-full">
+              Write down
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div style="display: none">
-    {{ book.currentSymbol }}
+
+    <div class="hidden">{{ book.currentSymbol }}</div>
   </div>
 </template>
 
@@ -112,6 +144,8 @@ const note = ref("");
 const fontFaces = ref<IFontFace[]>([]);
 const dictWord = ref({ endAt: 0, content: "", startAt: 0 });
 const dictMeaning = ref("");
+const dictPopUpVisible = ref(false);
+const prefVisible = ref(false);
 
 function scrollToLastPosition() {
   const el = document.getElementById("lastPosition");
@@ -203,23 +237,17 @@ function addDict() {
   const item = getSelectedText();
 
   if (item) {
-    document.getElementById("dictPopUp")!.style.display = "block";
     dictWord.value = item;
+    dictPopUpVisible.value = true;
   }
 }
 
 function showPref() {
-  const el = document.getElementById("preferences");
-  if (el!.style.display === "block") {
-    el!.style.display = "none";
-  } else {
-    el!.style.display = "block";
-  }
+  prefVisible.value = !prefVisible.value;
 }
 
 function hidePopUp() {
-  const element = document.getElementById("dictPopUp");
-  element!.style.display = "none";
+  dictPopUpVisible.value = false;
 }
 
 function saveDictWord() {
@@ -268,9 +296,7 @@ onUpdated(async () => {
 });
 </script>
 
-<style>
-
-
+<style scoped>
 .quote {
   background-color: #ffdcdc;
 }

@@ -1,17 +1,12 @@
 <template>
-  <footer b-7882z672yd class="border-top footer text-muted">
-    <div b-7882z672yd class="container">
-      &copy; 2022 - WebApp | UI Culture: et-EE | Culture: et-EE
+  <footer class="mt-auto border-t border-accent-warm/40 bg-parchment-100/80 py-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="font-body text-sm text-ink-800/70 text-center">
+        © {{ new Date().getFullYear() }} Highlighted · Your personal reading companion
+      </p>
     </div>
   </footer>
 </template>
 
-<script>
-export default {
-  name: "Footer"
-};
+<script setup lang="ts">
 </script>
-
-<style scoped>
-
-</style>

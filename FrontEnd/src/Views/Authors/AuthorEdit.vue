@@ -1,63 +1,55 @@
 <template>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <section class="text-center mb-12">
+      <h1 class="font-display text-3xl font-bold text-ink-900 mb-2">Edit Author</h1>
+      <p class="font-body text-ink-800/70">Update author details.</p>
+    </section>
 
-  <div class="container">
-    <div class="row">
-      <div class="text-center">
-        <h3> Authors</h3>
-        <p>Edit</p>
-      </div>
+    <div v-if="errors.length !== 0" class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 space-y-2">
+      <ErrorMessage v-for="error in errors" :key="error" :message="error" />
     </div>
-  </div>
 
-  <hr />
-
-  <div style="">
-
-    <div class="row">
-      <div class="col">
-        <div v-if="errors.length !== 0" class="text-danger validation-summary-errors" data-valmsg-summary="true">
-          <div v-for="error in errors">
-            <ErrorMessage :message="error"></ErrorMessage>
-          </div>
+    <div class="bg-white rounded-2xl border border-accent-warm/40 shadow-book p-8 mb-8">
+      <div class="space-y-6">
+        <div>
+          <label for="authorName" class="block font-body text-sm font-medium text-ink-800 mb-2">Author name</label>
+          <textarea
+            id="authorName"
+            v-model="author.name"
+            rows="2"
+            class="input-field resize-none"
+            placeholder="Author name..."
+          ></textarea>
         </div>
 
-        <div class="container" style="border-bottom: 5px pink inset; align-items: center;">
+        <div>
+          <label for="description" class="block font-body text-sm font-medium text-ink-800 mb-2">Description</label>
+          <textarea
+            id="description"
+            v-model="author.description"
+            rows="6"
+            class="input-field resize-none"
+            placeholder="Brief description..."
+          ></textarea>
+        </div>
 
-          <div class="row">
-            <div class="m-2  col-4 form-floating">
-              <textarea v-model="author.name" style="resize: none" class="form-control" type="text"
-                        placeholder="authorName"
-                        id="authorName"></textarea>
-              <label for="authorName">Author name...</label>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="m-2 col-8 form-floating">
-              <textarea style=" height:150px; resize: none" v-model="author.description" class="form-control"
-                        type="text" placeholder="title"
-                        id="description"></textarea>
-              <label for="description">Description...</label>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="m-2 col-1 form-group">
-              <input @click="editAuthor()" type="submit" value="Edit" class="btn btn-secondary" />
-            </div>
-
-            <div class="m-2 col-1 form-group">
-              <input @click="deleteAuthor()" type="submit" value="Delete" class="btn btn-danger" />
-            </div>
-          </div>
-
+        <div class="flex gap-4 pt-4">
+          <button @click="editAuthor()" type="button" class="btn-secondary">
+            Save Changes
+          </button>
+          <button @click="deleteAuthor()" type="button" class="btn-danger">
+            Delete
+          </button>
+          <router-link to="/authors" class="btn-secondary">
+            Cancel
+          </router-link>
         </div>
       </div>
     </div>
-  </div>
 
-  <div>
-    <router-link class="text-danger" to="/authors">Back to List</router-link>
+    <router-link to="/authors" class="font-body text-accent-amber hover:text-accent-gold font-medium transition-colors">
+      ← Back to List
+    </router-link>
   </div>
 </template>
 
@@ -100,7 +92,3 @@ async function deleteAuthor() {
   router.push("/authors");
 }
 </script>
-
-<style scoped>
-
-</style>

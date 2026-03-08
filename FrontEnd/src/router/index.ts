@@ -14,6 +14,7 @@ import Highlighteds from "@/Views/Highlighteds/Highlighteds.vue";
 import HighlightedsEdit from "@/Views/Highlighteds/HighlightedsEdit.vue";
 import { useAppUserStore } from "@/Stores/AppUserStore";
 import AuthorEdit from "@/Views/Authors/AuthorEdit.vue";
+import AuthorView from "@/Views/Authors/AuthorView.vue";
 import { AppUserService } from "@/Services/AppUserService";
 import BookEdit from "@/Views/Books/BookEdit.vue";
 
@@ -31,6 +32,7 @@ const router = createRouter({
     {path: "/books/preview:id", component: BookPreview},
     {path: "/books/edit/:id", component: BookEdit},
     {path: "/authors", component: AuthorIndex},
+    {path: "/authors/view/:id", component: AuthorView},
     {path: "/authors/add", component: AuthorAdd},
     {path: "/authors/edit/:id", component: AuthorEdit},
     {path: "/highlighted/edit/:id", component: HighlightedsEdit},

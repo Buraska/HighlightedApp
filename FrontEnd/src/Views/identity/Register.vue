@@ -1,47 +1,79 @@
 <template>
-  <main role="main" class="pb-1">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-2xl mx-auto">
+      <h1 class="font-display text-3xl font-bold text-ink-900 mb-2">Register</h1>
+      <p class="font-body text-ink-800/70 mb-8">Create a new account.</p>
 
-    <h1>Register</h1>
-
-    <h2>Create a new account.</h2>
-    <hr>
-    <div v-if="errors.length !== 0" class="text-danger validation-summary-errors" data-valmsg-summary="true">
-      <div v-for="error in errors">
-        <ErrorMessage :message="error"></ErrorMessage>
+      <div v-if="errors.length !== 0" class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 space-y-2">
+        <ErrorMessage v-for="error in errors" :key="error" :message="error" />
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-md-4">
-          <div class="form-floating m-1">
-            <input class="form-control" type="email" data-val="true"  id="Input_Email" name="Input.Email" v-model="email">
-            <label for="Input_Email">Email</label>
+      <form class="space-y-6" @submit.prevent="registerClicked">
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="space-y-6">
+            <div>
+              <label for="Input_Email" class="block font-body text-sm font-medium text-ink-800 mb-2">Email</label>
+              <input
+                id="Input_Email"
+                v-model="email"
+                type="email"
+                class="input-field"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label for="Input_Password" class="block font-body text-sm font-medium text-ink-800 mb-2">Password</label>
+              <input
+                id="Input_Password"
+                v-model="password"
+                type="password"
+                class="input-field"
+                placeholder="••••••••"
+              />
+            </div>
+            <div>
+              <label for="Input_ConfirmPassword" class="block font-body text-sm font-medium text-ink-800 mb-2">Confirm password</label>
+              <input
+                id="Input_ConfirmPassword"
+                v-model="confirmPassword"
+                type="password"
+                class="input-field"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full py-3 px-4 font-body font-semibold text-white bg-ink-900 hover:bg-ink-800 rounded-xl transition-colors"
+            >
+              Register
+            </button>
           </div>
-
-          <div class="form-floating m-1">
-            <input class="form-control" type="password" id="Input_Password" v-model="password" >
-            <label for="Input_Password">Password</label>
+          <div class="space-y-6">
+            <div>
+              <label for="Input_fName" class="block font-body text-sm font-medium text-ink-800 mb-2">First Name</label>
+              <input
+                id="Input_fName"
+                v-model="fName"
+                type="text"
+                class="input-field"
+                placeholder="John"
+              />
+            </div>
+            <div>
+              <label for="Input_lName" class="block font-body text-sm font-medium text-ink-800 mb-2">Last Name</label>
+              <input
+                id="Input_lName"
+                v-model="lName"
+                type="text"
+                class="input-field"
+                placeholder="Doe"
+              />
+            </div>
           </div>
-          <div class="form-floating m-1">
-            <input class="form-control" type="password" id="Input_ConfirmPassword" name="Input.ConfirmPassword" v-model="confirmPassword">
-            <label for="Input_ConfirmPassword">Confirm password</label>
-            <span class="text-danger field-validation-valid" data-valmsg-for="Input.ConfirmPassword" data-valmsg-replace="true"></span>
-          </div>
-          <button v-on:click="registerClicked" class="w-100 btn btn-lg btn-primary">Register</button>
-      </div>
-      <div class="col-4">
-        <div class="form-floating m-1">
-          <input class="form-control" type="text" data-val="true"  id="Input_fName" v-model="fName">
-          <label for="Input_fName">First Name</label>
         </div>
-        <div class="form-floating m-1">
-          <input class="form-control" type="text" data-val="true"  id="Input_lName" v-model="lName">
-          <label for="Input_fName">First Name</label>
-        </div>
-      </div>
+      </form>
     </div>
-  </main>
-
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -106,7 +138,3 @@ async function registerClicked() {
   router.push("/");
 }
 </script>
-
-<style scoped>
-
-</style>

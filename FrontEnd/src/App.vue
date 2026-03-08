@@ -3,14 +3,11 @@ import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
 </script>
 <template>
-  <Header />
-  <div  class="container">
-    <main role="main" class="pb-3">
+  <div class="min-h-screen flex flex-col bg-parchment-50">
+    <Header />
+    <main role="main" class="flex-1">
       <RouterView />
     </main>
+    <Footer />
   </div>
-  <Footer />
 </template>
-
-<style scoped>
-</style>

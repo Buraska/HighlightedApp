@@ -1,7 +1,4 @@
-import "jquery";
-import "popper.js";
-import "bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./style.css";
 import "font-awesome/css/font-awesome.min.css";
 
 import { createPinia } from "pinia";

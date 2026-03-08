@@ -1,30 +1,45 @@
 <template>
-  <div class="container">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-md mx-auto">
+      <h1 class="font-display text-3xl font-bold text-ink-900 mb-2">Login</h1>
+      <p class="font-body text-ink-800/70 mb-4">Welcome back to your library.</p>
+      <p class="font-body text-sm text-ink-800/60 mb-8 p-3 rounded-lg bg-parchment-100 border border-accent-warm/40">
+        Demo: use email <code class="font-mono text-accent-amber">test@test.com</code> and password <code class="font-mono text-accent-amber">test</code>
+      </p>
 
-  <h1>Login</h1>
-  <div class="row">
-    <div class="col-md-4">
-      <div v-if="errorHappened" class="text-danger validation-summary-errors" data-valmsg-summary="true">
-        <ul>
+      <div v-if="errorHappened" class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 font-body text-sm">
+        <ul class="list-disc list-inside">
           <li>{{ errors }}</li>
         </ul>
       </div>
 
-      <div>
-        <div class="form-group">
-          <label class="control-label" >email</label>
-          <input v-model="email" class="form-control" type="text" />
+      <form class="space-y-6" @submit.prevent="loginClicked()">
+        <div>
+          <label class="block font-body text-sm font-medium text-ink-800 mb-2">Email</label>
+          <input
+            v-model="email"
+            type="email"
+            class="input-field"
+            placeholder="you@example.com"
+          />
         </div>
-        <div class="form-group">
-          <label class="control-label" >password</label>
-          <input  v-model="password" class="form-control" type="password" />
+        <div>
+          <label class="block font-body text-sm font-medium text-ink-800 mb-2">Password</label>
+          <input
+            v-model="password"
+            type="password"
+            class="input-field"
+            placeholder="••••••••"
+          />
         </div>
-        <div class="form-group">
-          <input @click="loginClicked()" type="submit" value="Login" class="btn btn-primary" />
-        </div>
-      </div>
+        <button
+          type="submit"
+          class="w-full py-3 px-4 font-body font-semibold text-white bg-ink-900 hover:bg-ink-800 rounded-xl transition-colors"
+        >
+          Login
+        </button>
+      </form>
     </div>
-  </div>
   </div>
 </template>
 
@@ -38,18 +53,16 @@ const router = useRouter();
 const appUserStore = useAppUserStore();
 const service = new AppUserService();
 
-const email = ref("");
-const password = ref("");
+const email = ref("test@test.com");
+const password = ref("test");
 const errorHappened = ref(false);
 const errors = ref("");
 
 async function loginClicked() {
-  console.log("LoginClicked()");
   const res = await service.login(email.value, password.value);
 
   if (appUserStore.$state.jwt) {
     router.push("/");
   }
-  console.log(res);
 }
 </script>

@@ -1,9 +1,7 @@
 <template>
-
-  <div style="color: red" class="">
-    ¡¡¡ {{ message }} !!!
-  </div>
-
+  <p class="font-body text-sm text-red-700">
+    {{ message }}
+  </p>
 </template>
 
 <script setup lang="ts">
@@ -11,6 +9,3 @@ defineProps<{
   message: string;
 }>();
 </script>
-
-<style scoped>
-</style>

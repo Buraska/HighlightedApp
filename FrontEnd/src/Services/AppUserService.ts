@@ -2,8 +2,7 @@ import type { IJWTResponse } from "@/Domain/ConnectionModels/IJWTResponse";
 import type { IServiceResult } from "@/Domain/ConnectionModels/IServiceResult";
 import { useAppUserStore } from "@/Stores/AppUserStore";
 import httpCLient from "@/http-client";
-import type { AxiosError, AxiosResponse } from "axios";
-import { data } from "jquery";
+import type { AxiosError } from "axios";
 import router from "@/router";
 
 export class AppUserService {

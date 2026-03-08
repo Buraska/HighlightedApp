@@ -1,55 +1,44 @@
 <template>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <section class="text-center mb-12">
+      <h1 class="font-display text-3xl font-bold text-ink-900 mb-2">Edit Highlight</h1>
+      <p class="font-body text-ink-800/70">Update your highlight.</p>
+    </section>
 
-  <div class="container">
-    <div class="row">
-      <div class="text-center">
-        <h3>Highlighted</h3>
-        <p>Edit</p>
-      </div>
+    <div v-if="errors.length !== 0" class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 space-y-2">
+      <ErrorMessage v-for="error in errors" :key="error" :message="error" />
     </div>
-  </div>
 
-  <hr />
-
-  <div style="">
-
-    <div class="row">
-      <div class="col">
-        <div v-if="errors.length !== 0" class="text-danger validation-summary-errors" data-valmsg-summary="true">
-          <div v-for="error in errors">
-            <ErrorMessage :message="error"></ErrorMessage>
-          </div>
+    <div class="bg-white rounded-2xl border border-accent-warm/40 shadow-book p-8 mb-8">
+      <div class="space-y-6">
+        <div v-if="highlighted.highlightedType.name !== 'quote'">
+          <label for="description" class="block font-body text-sm font-medium text-ink-800 mb-2">Content</label>
+          <textarea
+            id="description"
+            v-model="highlighted.comment"
+            rows="6"
+            class="input-field resize-none"
+            placeholder="Edit content..."
+          ></textarea>
         </div>
 
-        <div class="container" style="border-bottom: 5px pink inset; align-items: center;">
-
-
-          <div class="row">
-            <div v-if="highlighted.highlightedType.name !== 'quote'" class="m-2 col-8 form-floating">
-              <textarea style=" height:150px; resize: none" v-model="highlighted.comment" class="form-control"
-                        type="text" placeholder="title"
-                        id="description"></textarea>
-              <label for="description">Content</label>
-            </div>
-          </div>
-
-          <div class="row">
-            <div v-if="highlighted.highlightedType.name !== 'quote'" class="m-2 col-1 form-group">
-              <input @click="editHighlighted()" type="submit" value="Edit" class="btn btn-secondary" />
-            </div>
-
-            <div class="m-2 col-1 form-group">
-              <input @click="deleteHighlighted()" type="submit" value="Delete" class="btn btn-danger" />
-            </div>
-          </div>
-
+        <div class="flex gap-4 pt-4">
+          <button v-if="highlighted.highlightedType.name !== 'quote'" @click="editHighlighted()" type="button" class="btn-secondary">
+            Save Changes
+          </button>
+          <button @click="deleteHighlighted()" type="button" class="btn-danger">
+            Delete
+          </button>
+          <router-link :to="'/highlighted/' + highlighted.bookId" class="btn-secondary">
+            Cancel
+          </router-link>
         </div>
       </div>
     </div>
-  </div>
 
-  <div>
-    <router-link class="text-danger" :to="'/highlighted/' + highlighted.bookId">Back to List</router-link>
+    <router-link :to="'/highlighted/' + highlighted.bookId" class="font-body text-accent-amber hover:text-accent-gold font-medium transition-colors">
+      ← Back to List
+    </router-link>
   </div>
 </template>
 
@@ -101,7 +90,3 @@ async function deleteHighlighted() {
   router.push("/highlighted/" + highlighted.value.bookId);
 }
 </script>
-
-<style scoped>
-
-</style>
