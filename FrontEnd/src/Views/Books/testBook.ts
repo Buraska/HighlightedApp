@@ -84,8 +84,9 @@ export default class TestBook{
 }
 
   book: IBook = {
+  id:"3",
   title: "Tassssssssssssssssssssssssssm",
-  symbolTotal: 10000,
+  symbolsTotal: 10000,
   currentSymbol: 5320,
   isFinished: false,
   content: this.text,
@@ -98,10 +99,12 @@ export default class TestBook{
     orderNo: 0,
     startAt: 0,
     endAt: 0,
+    bookId: this.book.id!,
     book: this.book,
     highlightedType: {name: "quote"},
     likes: []},
     {
+      bookId: "1",
       content: "",
       comment: "I think some abrakabammamamamammama likes ltiaedawI think some abrakabammamamamammama likes ltiaedawI think some abrakabammamamamammama likes ltiaedaw",
       orderNo: 0,
@@ -113,6 +116,7 @@ export default class TestBook{
     },
 
     {
+      bookId: "1",
       content: "MenoMuze",
       comment: "something about memory",
       orderNo: 0,

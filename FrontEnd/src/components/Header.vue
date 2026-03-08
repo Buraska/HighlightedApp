@@ -46,21 +46,10 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { useAppUserStore } from "@/Stores/AppUserStore";
-import { Options, Vue } from "vue-class-component";
-import { RouterLink } from "vue-router";
 import { AppUserService } from "@/Services/AppUserService";
 
-@Options({
-  components: {
-  }
-})
-export default class Header extends Vue {
-  appUserStore = useAppUserStore();
-  appUserService = new AppUserService();
-
-
-
-}
+const appUserStore = useAppUserStore();
+const appUserService = new AppUserService();
 </script>

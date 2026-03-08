@@ -61,51 +61,44 @@
   </div>
 </template>
 
-<script lang="ts">
-
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { AuthorService } from "@/Services/AuthorService";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import type { IAuthor } from "@/Domain/IAuthor";
 
-@Options({
-  components: { ErrorMessage }
-})
+const route = useRoute();
+const router = useRouter();
+const authorService = new AuthorService();
 
-export default class AuthorEdit extends Vue {
+const errors = ref<string[]>([]);
+const author = ref<IAuthor>({ name: "", description: "" });
 
-  authorService = new AuthorService();
+onMounted(async () => {
+  const id = route.params["id"].toString();
+  author.value = await authorService.get(id);
+});
 
-  errors: string[] = [];
-  author: IAuthor = { name: "", description: "" };
+async function editAuthor() {
+  errors.value = [];
 
-  async beforeCreate() {
-    var id = this.$route.params["id"].toString();
-    this.author = await this.authorService.get(id);
+  if (author.value.name.length === 0) {
+    errors.value.push("Author name form cannot be empty");
   }
 
-  async editAuthor() {
-    this.errors = [];
-
-    if (this.author.name.length === 0) {
-      this.errors.push("Author name form cannot be empty");
-    }
-
-    if (this.errors.length !== 0) {
-      return;
-    }
-
-    await this.authorService.edit(this.author);
-    this.$router.push("/authors");
+  if (errors.value.length !== 0) {
+    return;
   }
 
-  async deleteAuthor(){
-    await   this.authorService.delete(this.author.id!);
-    this.$router.push("/authors");
+  await authorService.edit(author.value);
+  router.push("/authors");
+}
 
-  }
-
-};
+async function deleteAuthor() {
+  await authorService.delete(author.value.id!);
+  router.push("/authors");
+}
 </script>
 
 <style scoped>

@@ -40,39 +40,35 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref } from "vue";
 import type { ISearchBarItem } from "@/components/ISearchBarItem";
 
-@Options({
-  props: {
-    suggestedItems: Array,
-    chosenItems: Array
-  }
-})
+const props = defineProps<{
+  suggestedItems: ISearchBarItem[];
+  chosenItems: ISearchBarItem[];
+}>();
 
-export default class SearchBar extends Vue {
-  title = "tags";
-  input = "";
+const title = "tags";
+const input = ref("");
 
-  filteredList(suggestedItems: ISearchBarItem[]) {
-    return suggestedItems.filter((item) =>
-      item.name.toLowerCase().includes(this.input.toLowerCase())
-    );
-  }
+function filteredList(suggestedItems: ISearchBarItem[]) {
+  return suggestedItems.filter((item) =>
+    item.name.toLowerCase().includes(input.value.toLowerCase())
+  );
+}
 
-  moveElement(item: ISearchBarItem, fArray: ISearchBarItem[], sArray: ISearchBarItem[]) {
-    var i = -1;
-    for (let value of fArray) {
-      i++;
-      if (item.name === value.name) {
-        break;
-      }
+function moveElement(item: ISearchBarItem, fArray: ISearchBarItem[], sArray: ISearchBarItem[]) {
+  let i = -1;
+  for (const value of fArray) {
+    i++;
+    if (item.name === value.name) {
+      break;
     }
-
-    sArray.push(fArray[i]);
-    fArray.splice(i, 1);
   }
+
+  sArray.push(fArray[i]);
+  fArray.splice(i, 1);
 }
 </script>
 

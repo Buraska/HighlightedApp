@@ -84,8 +84,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
 import { BookService } from "@/Services/BookService";
 import { LanguageService } from "@/Services/LanguageService";
@@ -97,91 +98,78 @@ import type { IAuthor } from "@/Domain/IAuthor";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import type { IBook } from "@/Domain/IBook";
 
-@Options({
-  components: { SearchBar, ErrorMessage }
-})
+const router = useRouter();
+const langService = new LanguageService();
+const tagsService = new TagService();
+const bookService = new BookService();
+const authorService = new AuthorService();
 
-export default class BookAdd extends Vue {
-  langService = new LanguageService();
-  tagsService = new TagService();
-  bookService = new BookService();
-  authorService = new AuthorService();
+const errors = ref<string[]>([]);
+const ChosenTags = ref<ITag[]>([]);
+const SuggestedTags = ref<ITag[]>([]);
+const languages = ref<ILanguage[]>([]);
+const authors = ref<IAuthor[]>([]);
 
+const book = reactive<IBook>({
+  id: "",
+  author: undefined,
+  content: "",
+  currentSymbol: 0,
+  highlighteds: [],
+  isFinished: false,
+  language: undefined,
+  preference: undefined,
+  symbolsTotal: 0,
+  tags: [],
+  title: ""
+});
 
+async function addBook() {
+  errors.value = [];
 
-  errors: string[] = [];
-
-
-
-
-  ChosenTags: ITag[] = [];
-  SuggestedTags: ITag[] = [];
-  languages: ILanguage[] = [];
-  authors: IAuthor[] = [];
-
-  book: IBook = {
-    author: undefined,
-    content: "",
-    currentSymbol: 0,
-    highlighteds: [],
-    isFinished: false,
-    language: undefined,
-    preference: undefined,
-    symbolsTotal: 0,
-    tags: this.ChosenTags,
-    title: ""
-  }
-  async addBook() {
-    this.errors = [];
-
-    if (this.book.title.length < 1 || this.book.title.length > 64) {
-      this.errors.push("Title should be from 1 to 64 characters");
-    }
-
-    if (this.book.content.length < 1) {
-      this.errors.push("Content cannot be empty");
-    }
-
-    if (!this.book.language) {
-      this.errors.push("You have to choose language");
-    }
-
-    if (!this.book.author) {
-      this.errors.push("You have to choose author");
-    }
-
-    if (this.errors.length !== 0) {
-      document.scrollingElement!.scroll({ top: 0 });
-      return;
-    }
-
-
-    this.book.symbolsTotal = this.book.content.length;
-    var res = await this.bookService.add(this.book);
-
-    this.$router.push("/books")
+  if (book.title.length < 1 || book.title.length > 64) {
+    errors.value.push("Title should be from 1 to 64 characters");
   }
 
-  async mounted() {
-    console.log("asdas");
-    var tags = await this.tagsService.getAll();
-    if (tags !== null) {
-      this.SuggestedTags = tags;
-    }
-
-    var lan = await this.langService.getAll();
-    if (lan !== null) {
-      this.languages = lan;
-    }
-
-    var aut = await this.authorService.getAll();
-    if (aut !== null) {
-      this.authors = aut;
-    }
+  if (book.content.length < 1) {
+    errors.value.push("Content cannot be empty");
   }
 
+  if (!book.language) {
+    errors.value.push("You have to choose language");
+  }
 
-};
+  if (!book.author) {
+    errors.value.push("You have to choose author");
+  }
+
+  if (errors.value.length !== 0) {
+    document.scrollingElement!.scroll({ top: 0 });
+    return;
+  }
+
+  book.symbolsTotal = book.content.length;
+  await bookService.add({ ...book, tags: ChosenTags.value });
+
+  router.push("/books");
+}
+
+onMounted(async () => {
+  const tags = await tagsService.getAll();
+  if (tags !== null) {
+    SuggestedTags.value = tags;
+  }
+
+  const lan = await langService.getAll();
+  if (lan !== null) {
+    languages.value = lan;
+  }
+
+  const aut = await authorService.getAll();
+  if (aut !== null) {
+    authors.value = aut;
+  }
+});
 </script>
 
 <style scoped>

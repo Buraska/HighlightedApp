@@ -55,7 +55,7 @@
 
           <div class="row">
             <div class="m-2 col-6 form-group">
-              <SearchBar :chosen-items="book.tags" :suggested-items="SuggestedTags"></SearchBar>
+              <SearchBar :chosen-items="book.tags ?? []" :suggested-items="SuggestedTags"></SearchBar>
             </div>
           </div>
 
@@ -76,8 +76,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref, reactive, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
 import { BookService } from "@/Services/BookService";
 import { LanguageService } from "@/Services/LanguageService";
@@ -89,89 +90,76 @@ import type { IAuthor } from "@/Domain/IAuthor";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import type { IBook } from "@/Domain/IBook";
 
-@Options({
-  components: { SearchBar, ErrorMessage }
-})
+const route = useRoute();
+const router = useRouter();
+const langService = new LanguageService();
+const tagsService = new TagService();
+const bookService = new BookService();
+const authorService = new AuthorService();
 
-export default class BookEdit extends Vue {
-  langService = new LanguageService();
-  tagsService = new TagService();
-  bookService = new BookService();
-  authorService = new AuthorService();
+const errors = ref<string[]>([]);
+const SuggestedTags = ref<ITag[]>([]);
+const languages = ref<ILanguage[]>([]);
+const authors = ref<IAuthor[]>([]);
 
-  errors: string[] = [];
+const book = reactive<IBook>({
+  id: "",
+  author: undefined,
+  content: "",
+  currentSymbol: 0,
+  highlighteds: [],
+  isFinished: false,
+  language: undefined,
+  preference: undefined,
+  symbolsTotal: 0,
+  tags: [],
+  title: ""
+});
 
-  SuggestedTags: ITag[] = [];
-  languages: ILanguage[] = [];
-  authors: IAuthor[] = [];
+async function editBook() {
+  errors.value = [];
 
-  book: IBook = {
-    author: undefined,
-    content: "",
-    currentSymbol: 0,
-    highlighteds: [],
-    isFinished: false,
-    language: undefined,
-    preference: undefined,
-    symbolsTotal: 0,
-    tags: [],
-    title: ""
+  if (book.title.length < 1 || book.title.length > 64) {
+    errors.value.push("Title should be from 1 to 64 characters");
   }
 
-  async beforeCreate() {
-    var id = this.$route.params["id"].toString();
-    this.book = await this.bookService.get(id);
-
-    console.log(this.book);
-
-    var tags = await this.tagsService.getAll();
-    if (tags !== null) {
-      this.SuggestedTags = tags.filter((x) => this.book.tags?.map((x) => x.name).indexOf(x.name) === -1)
-    }
-
+  if (!book.language) {
+    errors.value.push("You have to choose language");
   }
 
-  async editBook() {
-    this.errors = [];
-
-    if (this.book.title.length < 1 || this.book.title.length > 64) {
-      this.errors.push("Title should be from 1 to 64 characters");
-    }
-
-    if (!this.book.language) {
-      this.errors.push("You have to choose language");
-    }
-
-    if (!this.book.author) {
-      this.errors.push("You have to choose author");
-    }
-
-    if (this.errors.length !== 0) {
-      document.scrollingElement!.scroll({ top: 0 });
-      return;
-    }
-
-
-    var res = await this.bookService.edit(this.book);
-
-    this.$router.push("/books")
+  if (!book.author) {
+    errors.value.push("You have to choose author");
   }
 
-  async mounted() {
-
-    var lan = await this.langService.getAll();
-    if (lan !== null) {
-      this.languages = lan;
-    }
-
-    var aut = await this.authorService.getAll();
-    if (aut !== null) {
-      this.authors = aut;
-    }
+  if (errors.value.length !== 0) {
+    document.scrollingElement!.scroll({ top: 0 });
+    return;
   }
 
+  await bookService.edit(book);
 
-};
+  router.push("/books");
+}
+
+onMounted(async () => {
+  const id = route.params["id"].toString();
+  Object.assign(book, await bookService.get(id));
+
+  const tags = await tagsService.getAll();
+  if (tags !== null) {
+    SuggestedTags.value = tags.filter((x) => book.tags?.map((t) => t.name).indexOf(x.name) === -1);
+  }
+
+  const lan = await langService.getAll();
+  if (lan !== null) {
+    languages.value = lan;
+  }
+
+  const aut = await authorService.getAll();
+  if (aut !== null) {
+    authors.value = aut;
+  }
+});
 </script>
 
 <style scoped>

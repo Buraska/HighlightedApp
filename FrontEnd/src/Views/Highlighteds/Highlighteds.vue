@@ -19,45 +19,36 @@
     </div>
 
     <div class="filter-result">
-      <div v-for="highlighted in filteredList()">
+      <div v-for="highlighted in filteredList">
         <MyHighlighted :highlighted="highlighted"></MyHighlighted>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import TestBook from "@/Views/Books/testBook";
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import MyHighlighted from "@/components/MyHighlighted.vue";
 import type { IHighlighted } from "@/Domain/Highlighted";
 import { BookService } from "@/Services/BookService";
 
+const route = useRoute();
+const bookService = new BookService();
+const highlighteds = ref<IHighlighted[]>([]);
+const keywords = ref("");
 
+const filteredList = computed(() => {
+  return highlighteds.value.filter((item) =>
+    item.content.toLowerCase().includes(keywords.value.toLowerCase())
+  );
+});
 
-@Options({
-  components: {MyHighlighted}
-})
-export default class Highlighteds extends Vue {
-
-  highlighteds: IHighlighted[] = [];
-  bookService = new BookService();
-
-  keywords = "";
-
-  async beforeCreate(){
-    var id = this.$route.params["bookId"].toString();
-    this.highlighteds = (await this.bookService.get(id)).highlighteds;
-  }
-
-  filteredList() {
-    return this.highlighteds.filter((item) =>
-      item.content.toLowerCase().includes(this.keywords.toLowerCase())
-    );
-  }
-
-};
-
+onMounted(async () => {
+  const id = route.params["bookId"].toString();
+  const book = await bookService.get(id);
+  highlighteds.value = book.highlighteds;
+});
 </script>
 
 <style scoped>

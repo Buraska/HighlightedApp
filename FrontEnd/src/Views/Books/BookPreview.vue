@@ -6,7 +6,7 @@
       <hr/>
 
       <div class="row"><h3></h3>
-        <Author :author="book.author"></Author>
+        <Author v-if="book.author" :author="book.author" />
       </div>
 
       <div class="row"><h3>process: {{ Math.round((book.currentSymbol / book.symbolsTotal) * 100) }}%</h3></div>
@@ -23,29 +23,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import type { IBook } from "@/Domain/IBook";
-import TestBook from "@/Views/Books/testBook";
 import Author from "@/components/Author.vue";
 import { BookService } from "@/Services/BookService";
 
-@Options({
-    components: { Author }
-  }
-)
+const route = useRoute();
+const bookService = new BookService();
 
-export default class BookPreview extends Vue {
-  book: IBook = {currentSymbol: 0, highlighteds: [], isFinished: false, symbolsTotal: 0, title: "", content:""};
-  bookService = new BookService();
+const book = ref<IBook>({ currentSymbol: 0, highlighteds: [], isFinished: false, symbolsTotal: 0, title: "", content: "" });
 
-
-  async beforeCreate() {
-    var id = this.$route.params["id"].toString();
-    this.book = await this.bookService.get(id);
-  }
-
-  };
+onMounted(async () => {
+  const id = route.params["id"].toString();
+  book.value = await bookService.get(id);
+});
 </script>
 
 <style scoped>

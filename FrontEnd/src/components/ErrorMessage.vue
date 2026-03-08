@@ -1,23 +1,15 @@
 <template>
 
   <div style="color: red" class="">
-    ¡¡¡ {{message}} !!!
+    ¡¡¡ {{ message }} !!!
   </div>
 
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-@Options({
-  props: {
-    message: String,
-  }
-})
-
-export default class ErrorMessage extends Vue {
-
-}
+<script setup lang="ts">
+defineProps<{
+  message: string;
+}>();
 </script>
 
 <style scoped>

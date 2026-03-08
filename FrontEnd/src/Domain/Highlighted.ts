@@ -11,7 +11,7 @@ export interface IHighlighted{
   endAt: number,
 
   book?: IBook,
-  bookId?: string,
+  bookId: string,
   highlightedType: IHighlightedType,
   likes: ILike[]
 }

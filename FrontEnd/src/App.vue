@@ -1,17 +1,6 @@
- <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import { RouterLink, RouterView } from "vue-router";
+<script setup lang="ts">
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
-
-
-export default {
-  components: {
-    Footer,
-    Header
-  },
-}
-
 </script>
 <template>
   <Header />

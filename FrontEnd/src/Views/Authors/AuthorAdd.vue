@@ -55,46 +55,37 @@
   </div>
 </template>
 
-<script lang="ts">
-
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { AuthorService } from "@/Services/AuthorService";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 
-@Options({
-  components: {ErrorMessage}
-})
+const router = useRouter();
+const authorService = new AuthorService();
 
-export default class AuthorAdd extends Vue {
+const errors = ref<string[]>([]);
+const authorName = ref("");
+const description = ref("");
 
-  errors: string[] = [];
+async function addAuthor() {
+  errors.value = [];
 
-  authorName = "";
-  description = "";
-
-  authorService = new AuthorService();
-
-  async addAuthor() {
-    this.errors = [];
-
-    if (this.authorName.length === 0){
-      this.errors.push("Author name form cannot be empty")
-    }
-
-    if (this.errors.length !== 0){
-      return;
-    }
-
-    var res = await this.authorService.add(
-      {
-        name: this.authorName,
-        description: this.description
-      });
-
-    this.$router.push("/authors")
+  if (authorName.value.length === 0) {
+    errors.value.push("Author name form cannot be empty");
   }
 
-};
+  if (errors.value.length !== 0) {
+    return;
+  }
+
+  await authorService.add({
+    name: authorName.value,
+    description: description.value
+  });
+
+  router.push("/authors");
+}
 </script>
 
 <style scoped>

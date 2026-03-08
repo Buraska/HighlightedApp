@@ -24,49 +24,40 @@
     </div>
 
     <div class="filter-result">
-      <div v-for="author in filteredList()">
+      <div v-for="author in filteredList">
         <Author :author="author"></Author>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { AuthorService } from "@/Services/AuthorService";
 import type { IAuthor } from "@/Domain/IAuthor";
 import Author from "@/components/Author.vue";
-import SearchBar from "@/components/SearchBar.vue";
 
-@Options({
-  components: { Author, SearchBar }
-})
-export default class AuthorIndex extends Vue {
+const router = useRouter();
+const authorService = new AuthorService();
+const authors = ref<IAuthor[]>([]);
+const keywords = ref("");
 
-  authorService = new AuthorService();
-  authors: IAuthor[] = [];
+const filteredList = computed(() => {
+  return authors.value.filter((item) =>
+    item.name.toLowerCase().includes(keywords.value.toLowerCase())
+  );
+});
 
-  keywords = "";
-
-  filteredList() {
-    return this.authors.filter((item) =>
-      item.name.toLowerCase().includes(this.keywords.toLowerCase())
-    );
+onMounted(async () => {
+  const res = await authorService.getAll();
+  console.log(res);
+  if (res === null) {
+    router.push("/404");
+  } else {
+    authors.value = res;
   }
-
-  async beforeCreate() {
-      var res = await this.authorService.getAll();
-      console.log(res);
-      console.log(res);
-      if (res === null){
-        this.$router.push("/404")
-      }
-      else {
-        this.authors = res
-      }
-  }
-};
-
+});
 </script>
 
 <style scoped>

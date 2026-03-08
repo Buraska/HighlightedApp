@@ -1,6 +1,6 @@
 <template>
 
-  <div  id="{{author.id}}" style="display: flex; padding: 5px; border: 5px pink inset; align-items: center; margin: 20px" class="row bg-body align-content-center">
+  <div  :id="book.id" style="display: flex; padding: 5px; border: 5px pink inset; align-items: center; margin: 20px" class="row bg-body align-content-center">
 
     <div style="" class="col-2 text-break">
       <h6 class="">{{ book.title }}</h6>
@@ -14,7 +14,7 @@
     </div>
 
     <div  style="border-left-style: solid; border-right-style: solid; border-color: darkgray" class="col-2">
-      process: {{ Math.round((parseInt(book.currentSymbol) / parseInt(book.symbolsTotal)) * 100) }}%
+      process: {{ Math.round((book.currentSymbol / book.symbolsTotal) * 100) }}%
     </div>
 
     <div  style="border-right-style: solid; border-color: darkgray" class="col-2">
@@ -37,22 +37,12 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import type { IBook } from "@/Domain/IBook";
 
-import { Options, Vue } from "vue-class-component";
-import type { IAuthor } from "../Domain/IAuthor";
-
-@Options({
-  components: {},
-
-  props: {
-    book: Object
-  }
-})
-export default class Book extends Vue {
-
-
-};
+defineProps<{
+  book: IBook;
+}>();
 </script>
 
 <style scoped>

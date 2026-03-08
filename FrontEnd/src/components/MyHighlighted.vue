@@ -1,6 +1,6 @@
 <template>
 
-  <div v-if="highlighted.highlightedType.name === 'quote'" id="{{highlighted.id}}" style="display: flex; padding: 5px; border: 5px pink inset; align-items: center; margin: 20px" class="row bg-body align-content-center">
+  <div v-if="highlighted.highlightedType.name === 'quote'" :id="highlighted.id" style="display: flex; padding: 5px; border: 5px pink inset; align-items: center; margin: 20px" class="row bg-body align-content-center">
     <div style="" class="col">
       <h6>{{ highlighted.content }}</h6>
     </div>
@@ -61,33 +61,28 @@
   </div>
 </template>
 
-<script lang="ts">
-
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { useRouter } from "vue-router";
 import { HighlightedsService } from "@/Services/Highlighteds";
 import { BookService } from "@/Services/BookService";
+import type { IHighlighted } from "@/Domain/Highlighted";
 
-@Options({
-  props: {
-    highlighted: Object
-  }
-})
-export default class MyHighlighted extends Vue {
+defineProps<{
+  highlighted: IHighlighted;
+}>();
 
-  highLightService = new HighlightedsService()
-  bookService = new BookService()
+const router = useRouter();
+const highLightService = new HighlightedsService();
+const bookService = new BookService();
 
-  async referenceHigh(bookId: string, symbNo: number){
-    var book = await this.bookService.get(bookId);
+async function referenceHigh(bookId: string, symbNo: number) {
+  const book = await bookService.get(bookId);
 
-    book.currentSymbol = symbNo;
-    await this.bookService.edit(book);
+  book.currentSymbol = symbNo;
+  await bookService.edit(book);
 
-    this.$router.push("/books/view/" + bookId)
-  }
-
-
-};
+  router.push("/books/view/" + bookId);
+}
 </script>
 
 <style scoped>

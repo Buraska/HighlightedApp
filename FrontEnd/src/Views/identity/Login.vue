@@ -28,30 +28,28 @@
   </div>
 </template>
 
-
-
-<script lang="ts">
-import { Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { AppUserService } from "@/Services/AppUserService";
-import {useAppUserStore} from "@/Stores/AppUserStore";
+import { useAppUserStore } from "@/Stores/AppUserStore";
 
-export default class Login extends Vue {
-  appUserStore = useAppUserStore();
+const router = useRouter();
+const appUserStore = useAppUserStore();
+const service = new AppUserService();
 
-  email = "";
-  password = "";
-  service = new AppUserService();
-  errorHappened = false;
+const email = ref("");
+const password = ref("");
+const errorHappened = ref(false);
+const errors = ref("");
 
+async function loginClicked() {
+  console.log("LoginClicked()");
+  const res = await service.login(email.value, password.value);
 
-  async loginClicked(){
-    console.log("LoginClicked()");
-    var res = await this.service.login(this.email, this.password);
-
-    if (this.appUserStore.$state.jwt){
-      this.$router.push('/')
-    }
-    console.log(res);
+  if (appUserStore.$state.jwt) {
+    router.push("/");
   }
-};
+  console.log(res);
+}
 </script>

@@ -44,73 +44,67 @@
 
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { AppUserService } from "@/Services/AppUserService";
 import ErrorMessage from "@/components/ErrorMessage.vue";
-import { AxiosError } from "axios";
 
-@Options({components: {ErrorMessage}})
+const router = useRouter();
+const appUserService = new AppUserService();
 
-export default class Register extends Vue{
-  appUserService = new AppUserService();
+const errors = ref<string[]>([]);
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const fName = ref("");
+const lName = ref("");
 
-  errors: string[] = [];
-  email = "";
-  password = "";
-  confirmPassword = "";
-  fName = "";
-  lName = "";
+async function registerClicked() {
+  errors.value = [];
 
-  async registerClicked(){
-    this.errors = [];
-
-    if (this.email.length === 0 || this.email.length > 128){
-      this.errors.push("Email length should be in range of 1 and 128 characters")
-    }
-
-    if (this.password.length === 0 || this.password.length > 128){
-      this.errors.push("Password length should be in range of 1 and 128 characters")
-    }
-
-    if (this.fName.length === 0 || this.lName.length > 128){
-      this.errors.push("First name length should be in range of 1 and 128 characters")
-    }
-
-    if (this.lName.length === 0 || this.lName.length > 128){
-      this.errors.push("Last name length should be in range of 1 and 128 characters")
-    }
-
-    if (this.password !== this.confirmPassword){
-      this.errors.push("Passwords do not match to each other")
-    }
-
-
-    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-    if (!this.email.match(validRegex)){
-      this.errors.push("Not proper email")
-    }
-
-    if (this.errors.length !== 0){
-      return;
-    }
-
-    var res = await this.appUserService.register(this.email, this.password, this.fName, this.lName);
-
-    if (res.status === 400){
-      this.errors.push("Email is already registered");
-    }
-
-    if (this.errors.length !== 0){
-      return;
-    }
-
-    this.$router.push('/')
-
+  if (email.value.length === 0 || email.value.length > 128) {
+    errors.value.push("Email length should be in range of 1 and 128 characters");
   }
 
-};
+  if (password.value.length === 0 || password.value.length > 128) {
+    errors.value.push("Password length should be in range of 1 and 128 characters");
+  }
+
+  if (fName.value.length === 0 || fName.value.length > 128) {
+    errors.value.push("First name length should be in range of 1 and 128 characters");
+  }
+
+  if (lName.value.length === 0 || lName.value.length > 128) {
+    errors.value.push("Last name length should be in range of 1 and 128 characters");
+  }
+
+  if (password.value !== confirmPassword.value) {
+    errors.value.push("Passwords do not match to each other");
+  }
+
+  const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  if (!email.value.match(validRegex)) {
+    errors.value.push("Not proper email");
+  }
+
+  if (errors.value.length !== 0) {
+    return;
+  }
+
+  const res = await appUserService.register(email.value, password.value, fName.value, lName.value);
+
+  if (res.status === 400) {
+    errors.value.push("Email is already registered");
+  }
+
+  if (errors.value.length !== 0) {
+    return;
+  }
+
+  router.push("/");
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <template>
 
-  <div  id="{{author.id}}" style="display: flex; padding: 5px; border: 5px pink inset; align-items: center; margin: 20px" class="row bg-body align-content-center">
+  <div :id="author.id" style="display: flex; padding: 5px; border: 5px pink inset; align-items: center; margin: 20px" class="row bg-body align-content-center">
     <div style="" class="col-2 text-break">
       <h6>{{ author.name }}</h6>
     </div>
@@ -25,20 +25,12 @@
   </div>
 </template>
 
-<script lang="ts">
-
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
 import type { IAuthor } from "../Domain/IAuthor";
 
-@Options({
-  props: {
-    author: Object
-  }
-})
-export default class Author extends Vue {
-
-
-};
+defineProps<{
+  author: IAuthor;
+}>();
 </script>
 
 <style scoped>

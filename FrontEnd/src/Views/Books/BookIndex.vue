@@ -24,54 +24,41 @@
     </div>
 
     <div class="filter-result">
-      <div v-for="book in filteredList()">
-        <Book :book="book"></Book>
+      <div v-for="book in filteredList">
+        <Book :book="book" />
       </div>
     </div>
   </div>
 
 </template>
 
-
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { BookService } from "@/Services/BookService";
-import { useAppUserStore } from "@/Stores/AppUserStore";
 import type { IBook } from "@/Domain/IBook";
-import TestBook from "@/Views/Books/testBook";
-import Book from "@/components/Book.vue"
+import Book from "@/components/Book.vue";
 
-@Options({
-  components: {Book}
-})
+const router = useRouter();
+const bookService = new BookService();
+const keywords = ref("");
+const books = ref<IBook[]>([]);
 
-export default class BookIndex extends Vue{
-  bookService = new BookService();
-  appUserStore = useAppUserStore();
+const filteredList = computed(() => {
+  return books.value.filter((item) =>
+    item.title.toLowerCase().includes(keywords.value.toLowerCase())
+  );
+});
 
-
-  keywords = ""
-  books: IBook[] = [];
-
-
-  filteredList() {
-    return this.books.filter((item) =>
-      item.title.toLowerCase().includes(this.keywords.toLowerCase())
-    );
+onMounted(async () => {
+  const res = await bookService.getAll();
+  console.log(res);
+  if (res === null) {
+    router.push("/404");
+  } else {
+    books.value = res;
   }
-
-  async beforeCreate() {
-    var res = await this.bookService.getAll();
-    console.log(res);
-    console.log(res);
-    if (res === null){
-      this.$router.push("/404")
-    }
-    else {
-      this.books = res
-    }
-  }
-};
+});
 </script>
 
 <style>

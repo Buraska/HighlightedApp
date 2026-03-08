@@ -53,59 +53,53 @@
   </div>
 </template>
 
-<script lang="ts">
-
-import { Options, Vue } from "vue-class-component";
-import { AuthorService } from "@/Services/AuthorService";
-import ErrorMessage from "@/components/ErrorMessage.vue";
-import type { IAuthor } from "@/Domain/IAuthor";
-import type { IHighlighted } from "@/Domain/Highlighted";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { HighlightedsService } from "@/Services/Highlighteds";
+import ErrorMessage from "@/components/ErrorMessage.vue";
+import type { IHighlighted } from "@/Domain/Highlighted";
 
-@Options({
-  components: { ErrorMessage }
-})
+const route = useRoute();
+const router = useRouter();
+const highlightedsService = new HighlightedsService();
 
-export default class HighlightedsEdit extends Vue {
+const errors = ref<string[]>([]);
+const highlighted = ref<IHighlighted>({
+  endAt: 0,
+  highlightedType: { name: "none" },
+  likes: [],
+  orderNo: 0,
+  startAt: 0,
+  content: "",
+  comment: "",
+  bookId: ""
+});
 
-  highlightedsService = new HighlightedsService();
+onMounted(async () => {
+  const id = route.params["id"].toString();
+  highlighted.value = await highlightedsService.get(id);
+});
 
-  errors: string[] = [];
-  highlighted: IHighlighted = {
-    endAt: 0,
-    highlightedType: { name:"none"},
-    likes: [],
-    orderNo: 0,
-    startAt: 0,
-    content: "", comment: "" };
+async function editHighlighted() {
+  errors.value = [];
 
-  async beforeCreate() {
-    var id = this.$route.params["id"].toString();
-    this.highlighted = await this.highlightedsService.get(id);
+  if (highlighted.value.comment?.length === 0 || (highlighted.value.comment?.length ?? 0) > 2000) {
+    errors.value.push("Comment has to be in range of 1 and 2000 characters");
   }
 
-  async editHighlighted() {
-    this.errors = [];
-
-    if (this.highlighted.comment?.length === 0 || this.highlighted.comment!.length > 2000) {
-      this.errors.push("Comment has to be in range of 1 and 2000 characters");
-    }
-
-    if (this.errors.length !== 0) {
-      return;
-    }
-
-    await this.highlightedsService.edit(this.highlighted);
-    this.$router.push("/highlighted/" + this.highlighted.bookId);
+  if (errors.value.length !== 0) {
+    return;
   }
 
-  async deleteHighlighted(){
-    await   this.highlightedsService.delete(this.highlighted.id!);
-    this.$router.push("/highlighted/" + this.highlighted.bookId);
+  await highlightedsService.edit(highlighted.value);
+  router.push("/highlighted/" + highlighted.value.bookId);
+}
 
-  }
-
-};
+async function deleteHighlighted() {
+  await highlightedsService.delete(highlighted.value.id!);
+  router.push("/highlighted/" + highlighted.value.bookId);
+}
 </script>
 
 <style scoped>
