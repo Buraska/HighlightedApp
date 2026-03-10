@@ -38,7 +38,6 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
 })
-    .AddDefaultUI()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
@@ -89,6 +88,7 @@ builder.Services.Configure<IdentityOptions>(options => {
 });
 
 builder.Services.AddControllersWithViews();
+
 
 
 /*lang settings*/
@@ -147,8 +147,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // SPA: redirect errors to root (serves index.html)
+    app.UseExceptionHandler("/");
     app.UseHsts();
 }
 app.UseSwagger();
@@ -169,19 +169,17 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+
 app.UseRouting();
 app.UseRequestLocalization(options: app.Services.GetService<IOptions<RequestLocalizationOptions>>()?.Value!);
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+// API controllers (attribute routing)
+app.MapControllers();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+// SPA fallback: serve index.html for non-API routes (Vue client-side routing)
+app.MapFallbackToFile("index.html");
 
 app.Run();

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: buraska/highlighted-frontend:latest
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+  
+  backend:
+    image: buraska/highlighted-backend:latest
+    container_name: backend
+    depends_on:
+      - database-postgres
+    restart: unless-stopped
+    environment:
+      - "ConnectionStrings:NpgsqlConnection=Host=webapp-postgres;Port=5432;Username=postgres;Password=postgres;database=Webapp;IncludeErrorDetail=true"
+    ports:
+      - "7192:80"
+  
+  database-postgres:
+    container_name: webapp-postgres
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      - POSTGEST_user=postgres
+      - POSTGRES_PASSWORD=postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5432:5432"
+  
+    volumes:
+        - webapp-postgres-volume:/var/lib/postgresql
+
+volumes:
+  webapp-postgres-volume: 
+

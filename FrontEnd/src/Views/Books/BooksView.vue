@@ -42,6 +42,7 @@
               &#9881;
             </button>
             <div
+              v-if="book.preference"
               v-show="prefVisible"
               id="preferences"
               class="absolute left-0 top-full mt-2 p-4 bg-white rounded-xl shadow-book border border-accent-warm/40 min-w-[200px]"
@@ -79,7 +80,7 @@
       <div
         id="text-placeholder"
         class="[&_.quote]:bg-pink-300 flex-1 min-w-0 bg-parchment-50 rounded-2xl border border-accent-warm/40 p-8 font-body text-ink-800 leading-relaxed whitespace-pre-line"
-        :style="{ fontSize: book.preference.fontSize + 'px', fontFamily: book.preference.fontFace.name }"
+        :style="{ fontSize: (book.preference?.fontSize ?? 16) + 'px', fontFamily: book.preference?.fontFace?.name ?? 'inherit' }"
         v-html="text"
       ></div>
 
@@ -156,7 +157,7 @@ function scrollToLastPosition() {
 }
 
 function changeCurrentSymbol() {
-  const els = document.getElementsByClassName("char-anchor");
+  const els = Array.from(document.getElementsByClassName("char-anchor"));
 
   for (const l of els) {
     const pos = (l as Element).getBoundingClientRect();
