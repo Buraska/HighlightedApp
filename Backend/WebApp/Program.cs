@@ -166,7 +166,7 @@ app.UseSwaggerUI(options =>
     // options.RoutePrefix = string.Empty;
 });
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); Docker container runs http only
 app.UseStaticFiles();
 
 

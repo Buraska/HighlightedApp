@@ -1,15 +1,7 @@
 version: '3.8'
 
 services:
-  frontend:
-    container_name: frontend
-    build:
-      context: ../FrontEnd/
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - "3000:8080"
-  
+
   backend:
     container_name: backend
     build:
@@ -20,8 +12,8 @@ services:
     restart: unless-stopped
     environment:
       - "ConnectionStrings:NpgsqlConnection=Host=webapp-postgres;Port=5432;Username=postgres;Password=postgres;database=Webapp;IncludeErrorDetail=true"
-    ports:
-      - "7192:80"
+    ports:  
+      - "5192:80"
   
   database-postgres:
     container_name: webapp-postgres
