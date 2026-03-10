@@ -78,7 +78,7 @@
       <!-- Main content -->
       <div
         id="text-placeholder"
-        class="flex-1 min-w-0 bg-parchment-50 rounded-2xl border border-accent-warm/40 p-8 font-body text-ink-800 leading-relaxed whitespace-pre-line"
+        class="[&_.quote]:bg-pink-300 flex-1 min-w-0 bg-parchment-50 rounded-2xl border border-accent-warm/40 p-8 font-body text-ink-800 leading-relaxed whitespace-pre-line"
         :style="{ fontSize: book.preference.fontSize + 'px', fontFamily: book.preference.fontFace.name }"
         v-html="text"
       ></div>
@@ -103,6 +103,9 @@
               Write down
             </button>
           </div>
+          <p class="font-body text-xs text-ink-800/60 leading-relaxed">
+            You can highlight text and make notes. You can see highlights in the book preview page.
+          </p>
         </div>
       </div>
     </div>
@@ -172,20 +175,29 @@ function changeCurrentSymbol() {
 
 function getSelectedText(): { content: string; startAt: number; endAt: number } | null {
   const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return null;
 
-  if (selection && selection.toString() !== "") {
-    const textVal = selection.toString();
+  const range = selection.getRangeAt(0);
+  const container = document.getElementById("text-placeholder");
+  if (!container || !container.contains(range.commonAncestorContainer)) return null;
 
-    if (book.content.indexOf(textVal) !== -1) {
-      if (textVal.length >= 1000) {
-        return null;
-      }
+  const measureRange = document.createRange();
+  measureRange.setStart(container, 0);
+  measureRange.setEnd(range.startContainer, range.startOffset);
+  const startAt = measureRange.toString().length;
 
-      const startAt = book.content.indexOf(textVal);
-      return { content: textVal, startAt, endAt: startAt + textVal.length };
-    }
-  }
-  return null;
+  measureRange.setEnd(range.endContainer, range.endOffset);
+  const endAt = measureRange.toString().length;
+
+  if (startAt === endAt) return null;
+
+  const actualStart = Math.min(startAt, endAt);
+  const actualEnd = Math.max(startAt, endAt);
+  const content = book.content.substring(actualStart, actualEnd);
+
+  if (content.length >= 1000) return null;
+
+  return { content, startAt: actualStart, endAt: actualEnd };
 }
 
 function addNote() {
@@ -204,16 +216,59 @@ function addNote() {
   }
 }
 
-function highlightQuotes() {
-  for (const h of book.highlighteds) {
-    if (h.highlightedType.name === "note") {
-      continue;
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function buildDisplayContent(): string {
+  const content = book.content;
+  const sortedHighlights = [...(book.highlighteds || [])]
+    .filter((h) => h.highlightedType.name !== "note")
+    .sort((a, b) => a.startAt - b.startAt);
+
+  const inserts: { at: number; html: string }[] = [];
+  inserts.push({ at: book.currentSymbol, html: '<span id="lastPosition"></span>' });
+  for (let i = 0; i <= content.length; i += 3000) {
+    inserts.push({ at: i, html: `<span class="char-anchor" id="${i}"></span>` });
+  }
+  inserts.sort((a, b) => a.at - b.at);
+
+  let result = "";
+  let lastEnd = 0;
+  let insertIdx = 0;
+
+  for (let i = 0; i <= content.length; i++) {
+    while (insertIdx < inserts.length && inserts[insertIdx].at === i) {
+      result += inserts[insertIdx].html;
+      insertIdx++;
     }
-    const reContent = text.value.match(new RegExp(h.content.split("").join("(?:<.*?>)?")));
-    if (reContent) {
-      text.value = text.value.replace(reContent[0], `<span class="${h.highlightedType.name}">` + reContent[0] + "</span>");
+
+    if (i >= content.length) break;
+
+    const endH = sortedHighlights.find((h) => h.endAt === i);
+    const startH = sortedHighlights.find((h) => h.startAt === i);
+
+    if (endH) {
+      result += escapeHtml(content.substring(lastEnd, i));
+      result += "</span>";
+      lastEnd = i;
+    }
+    if (startH) {
+      result += escapeHtml(content.substring(lastEnd, i));
+      result += `<span class="${startH.highlightedType.name}">`;
+      lastEnd = i;
     }
   }
+  result += escapeHtml(content.substring(lastEnd));
+  return result;
+}
+
+function highlightQuotes() {
+  text.value = buildDisplayContent();
 }
 
 function addQuote() {
@@ -274,16 +329,7 @@ onMounted(async () => {
   }
   fontFaces.value = await fontFaceService.getAll();
 
-  text.value = book.content;
-
-  const l = text.value.split("");
-  l.splice(book.currentSymbol, 0, "<span id=\"lastPosition\"></span>");
-  for (let i = l.length; i > 0; i = i - 3000) {
-    l.splice(i, 0, `<span class="char-anchor" id="${i}"></span>`);
-  }
-  text.value = l.join("");
-
-  highlightQuotes();
+  text.value = buildDisplayContent();
   window.addEventListener("scroll", changeCurrentSymbol);
 });
 
