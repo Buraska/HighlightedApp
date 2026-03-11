@@ -19,8 +19,9 @@ In this version, the core features are already implemented, including highlighti
 
 - Backend and API are hosted in ASP.NET Core.
 - Vue frontend is built and served by the backend (`wwwroot`).
-- API + app are exposed on **port `5192`** by default.
-- PostgreSQL runs in a separate container (`webapp-postgres`).
+- PostgreSQL runs in a separate container.
+- Authentication is implemented with ASP.NET Identity and JWT.
+- Backend has Domain layer(App.Domain)->Repository(App.DAL.EF)->BLL/Service layer (App.BLL)->API/Controller layer (WebApp)
 
 ## Quick Start (Docker Hub)
 
