@@ -24,6 +24,7 @@ In this version, the core features are already implemented, including highlighti
 - Backend has Domain layer(App.Domain)->Repository(App.DAL.EF)->BLL/Service layer (App.BLL)->API/Controller layer (WebApp)
 
 ## Quick Start (Docker Hub)
+<img width="1902" height="954" alt="image" src="https://github.com/user-attachments/assets/3b29d64b-e007-44b9-aa11-48818d3a241f" />
 
 Make sure port `5192` is free before launching.
 
