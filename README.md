@@ -26,12 +26,12 @@ In this version, the core features are already implemented, including highlighti
 
 Make sure port `5192` is free before launching.
 
-### Windows (PowerShell)
+### PowerShell
 
 ```powershell
 curl -o docker-compose.yml -uri https://raw.githubusercontent.com/Buraska/HighlightedApp/refs/heads/main/Backend/docker-compose.hub.yml; docker-compose up;start http://localhost:5192/
 ```
-
+### Bash
 ```bash
 curl -L "https://raw.githubusercontent.com/Buraska/HighlightedApp/refs/heads/main/Backend/docker-compose.hub.yml" -o docker-compose.yml
 docker compose up -d
