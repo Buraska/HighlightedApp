@@ -1,25 +1,39 @@
 ![LogoH](https://github.com/Buraska/HighlightedApp/assets/73584781/ac0c7474-3a31-4587-9d5c-1f0801b1f4f1)
 # Highlighted - Book Reading and Note-taking App
 
-Highlighted is a minimal viable product designed to enhance your reading experience and simplify the process of summarizing and note-taking. This application seamlessly combines a .NET backend with a Vue.js frontend.
+This is an MVP of the Highlighted platform. The idea is simple: users read books on the web, create highlights and notes, and interact with other users by sharing, commenting on, and liking highlights and notes.
 
-## Key Features
+In this version, the core features are already implemented, including highlighting and note-taking. While the project is not perfect yet, its main goal is to demonstrate my knowledge of backend architecture and my skills in building a Vue application.  
 
-- User Registration
+## Tech Stack
 
-- Add and Read Books: Add books to your personal library. You can also add categories to the book.
+- **Backend:** ASP.NET Core 6 (C#), REST API, JWT/Cookie auth
+- **Database:** PostgreSQL
+- **Frontend:** Vue 3 + TypeScript + Vite
+- **State/HTTP:** Pinia + Axios
+- **Styling:** Tailwind CSS
+- **Containerization:** Docker + Docker Compose
+- **API Docs:** Swagger (OpenAPI)
 
-- Quote and Define: While reading, highlight and categorize text passages as either quotes or dictionary words for quick reference.
+## Architecture Notes
 
-- Take Notes: Jot down your thoughts, ideas, and summaries while reading to create a comprehensive collection of notes.
+- Backend and API are hosted in ASP.NET Core.
+- Vue frontend is built and served by the backend (`wwwroot`).
+- API + app are exposed on **port `5192`** by default.
+- PostgreSQL runs in a separate container (`webapp-postgres`).
 
-## Purpose and Inspiration
+## Quick Start (Docker Hub)
 
-Highlighted was developed as a showcase of my expertise in developing with .NET and Vue.js frameworks. It serves as a prime example of building an application using the Model-View-ViewModel (MVVM) architectural pattern.
+Make sure port `5192` is free before launching.
 
-## Feedback and Contributions
+### Windows (PowerShell)
 
-I welcome feedback, suggestions, and contributions from the community to improve and expand Highlighted. Whether you're interested in design, development, or documentation, your input is highly valued.
+```powershell
+curl -o docker-compose.yml -uri https://raw.githubusercontent.com/Buraska/HighlightedApp/refs/heads/main/Backend/docker-compose.hub.yml; docker-compose up;start http://localhost:5192/
+```
 
-## App demonstration
-https://github.com/Buraska/HighlightedApp/assets/73584781/69b92159-685c-4556-a468-c1dda3c72b51
+```bash
+curl -L "https://raw.githubusercontent.com/Buraska/HighlightedApp/refs/heads/main/Backend/docker-compose.hub.yml" -o docker-compose.yml
+docker compose up -d
+xdg-open http://localhost:5192/ 2>/dev/null || open http://localhost:5192/
+```
