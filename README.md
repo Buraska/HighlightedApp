@@ -1,9 +1,9 @@
 ![LogoH](https://github.com/Buraska/HighlightedApp/assets/73584781/ac0c7474-3a31-4587-9d5c-1f0801b1f4f1)
 # Highlighted - Book Reading and Note-taking App
 
-This is an MVP of the Highlighted platform. The idea is simple: users read books on the web, create highlights and notes, and interact with other users by sharing, commenting on, and liking highlights and notes.
+This is an MVP of the Highlighted platform. The idea is simple: users read books on the web, create highlights and notes.
 
-In this version, the core features are already implemented, including highlighting and note-taking. While the project is not perfect yet, its main goal is to demonstrate my knowledge of backend architecture and my skills in building a Vue application.  
+The main goal of the project is to demonstrate my knowledge of backend architecture and skills in building a Vue application.  
 
 ## Tech Stack
 
